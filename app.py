@@ -3,7 +3,9 @@ import pandas as pd
 import joblib
 import time
 
-# Cấu hình trang (Mở rộng toàn màn hình, thanh công cụ luôn mở)
+# ==========================================
+# CẤU HÌNH TRANG (Mở rộng toàn màn hình, thanh công cụ luôn mở)
+# ==========================================
 st.set_page_config(
     page_title="ESTATE ANALYTICS", 
     page_icon="💎", 
@@ -12,15 +14,15 @@ st.set_page_config(
 )
 
 # ==========================================
-# 1. NHÚNG MÃ CSS CUSTOM (GIAO DIỆN GLASSMORPHISM XỊN XÒ)
+# 1. NHÚNG MÃ CSS CUSTOM (GIAO DIỆN GLASSMORPHISM)
 # ==========================================
 st.markdown("""
 <style>
-    /* Ẩn menu mặc định và footer, NHƯNG GIỮ LẠI header để thấy nút mũi tên > */
+    /* Ẩn menu mặc định và footer */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Chèn hình nền Biệt thự siêu sang toàn màn hình */
+    /* Hình nền Biệt thự */
     .stApp {
         background-image: url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop");
         background-size: cover;
@@ -29,7 +31,7 @@ st.markdown("""
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
-    /* Phủ một lớp màu đen mờ lên trên hình nền để chữ dễ đọc hơn */
+    /* Lớp phủ đen mờ */
     .stApp::before {
         content: "";
         position: absolute;
@@ -37,20 +39,19 @@ st.markdown("""
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(14, 17, 23, 0.75); /* Độ tối của nền */
+        background-color: rgba(14, 17, 23, 0.75); 
         z-index: 0;
     }
     
-    /* Nâng các thành phần lên trên lớp nền đen mờ */
     .stApp > header, .stApp > div {
         z-index: 1;
         position: relative;
     }
 
-    /* HIỆU ỨNG GLASSMORPHISM CHO CÁC THẺ THÔNG SỐ */
+    /* Thẻ thông số */
     div[data-testid="metric-container"] {
-        background: rgba(255, 255, 255, 0.05); /* Kính trong suốt */
-        backdrop-filter: blur(15px); /* Hiệu ứng làm mờ cảnh phía sau */
+        background: rgba(255, 255, 255, 0.05); 
+        backdrop-filter: blur(15px); 
         -webkit-backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         padding: 20px;
@@ -60,24 +61,23 @@ st.markdown("""
     }
     div[data-testid="metric-container"]:hover {
         transform: translateY(-5px);
-        border-color: rgba(212, 175, 55, 0.8); /* Viền vàng hiện lên khi di chuột */
+        border-color: rgba(212, 175, 55, 0.8); 
         background: rgba(255, 255, 255, 0.1);
     }
     
-    /* Chỉnh màu chữ trong thẻ kính */
     div[data-testid="metric-container"] label {
         color: #E2E8F0 !important;
         font-weight: 500;
         font-size: 1.1rem;
     }
     div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
-        color: #D4AF37 !important; /* Chữ số màu vàng Gold */
+        color: #D4AF37 !important; 
         font-size: 2.2rem;
         font-weight: 700;
         text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
     
-    /* Nút bấm thủy tinh */
+    /* Nút bấm */
     .stButton>button {
         background: rgba(212, 175, 55, 0.2);
         backdrop-filter: blur(10px);
@@ -119,7 +119,7 @@ st.markdown("""
         text-shadow: 0 2px 5px rgba(0,0,0,0.8);
     }
     
-    /* Khung kết quả hiển thị dạng kính mờ */
+    /* Khung kết quả */
     .result-box {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(20px);
@@ -154,55 +154,72 @@ try:
 except FileNotFoundError:
     st.error("Chưa tìm thấy file model.pkl!")
 
-# Tiêu đề với CSS custom - Dùng tên ESTATE ANALYTICS bạn đã chọn
 st.markdown('<h1 class="main-title">ESTATE ANALYTICS</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">Hệ thống Định giá Bất động sản Cao cấp - Nhóm 09</p>', unsafe_allow_html=True)
 
-# Thanh công cụ nhập liệu bên trái
 st.sidebar.markdown("### ⚙️ THÔNG SỐ TÀI SẢN")
 st.sidebar.markdown("---")
     
 def user_input_features():
-    area = st.sidebar.number_input('📐 Diện tích sàn (m²)', min_value=30, max_value=1000, value=100, step=5)
+    # Chọn đơn vị đo lường
+    unit_choice = st.sidebar.radio("🌐 Đơn vị đo lường (Chuẩn Việt/Mỹ):", ("Mét vuông (m²)", "Feet vuông (sq ft)"))
+    st.sidebar.markdown("---")
+    
+    # Xử lý nhập liệu theo đơn vị
+    if unit_choice == "Mét vuông (m²)":
+        area_display = st.sidebar.number_input('📐 Diện tích sàn (m²)', min_value=30, max_value=1000, value=100, step=5)
+        area_for_model = area_display * 10.7639 # AI dùng data Mỹ nên phải quy đổi ngầm
+    else:
+        area_display = st.sidebar.number_input('📐 Diện tích sàn (sq ft)', min_value=300, max_value=10000, value=1076, step=50)
+        area_for_model = area_display 
+        
     bedrooms = st.sidebar.number_input('🛏️ Số phòng ngủ', min_value=1, max_value=10, value=3)
     bathrooms = st.sidebar.number_input('🛁 Số phòng tắm', min_value=1, max_value=10, value=2)
     year_built = st.sidebar.number_input('🏗️ Năm xây dựng', min_value=1900, max_value=2026, value=2024)
         
     data = {
-        'GrLivArea': area,
+        'GrLivArea': area_for_model, 
         'BedroomAbvGr': bedrooms,
         'FullBath': bathrooms,
         'YearBuilt': year_built
     }
     features = pd.DataFrame(data, index=[0])
-    return features, area, bedrooms, bathrooms, year_built
+    return features, area_display, bedrooms, bathrooms, year_built, unit_choice
 
-input_df, area, bedrooms, bathrooms, year_built = user_input_features()
+input_df, area, bedrooms, bathrooms, year_built, unit_choice = user_input_features()
 
-# Hiển thị thông số dạng thẻ Metric
+# ==========================================
+# 3. HIỂN THỊ THÔNG SỐ 
+# ==========================================
 col1, col2, col3, col4 = st.columns(4)
-col1.metric(label="Diện tích mặt sàn", value=f"{area} m²")
+
+# Thay đổi chữ m2 hoặc sq ft tùy theo người dùng chọn
+if unit_choice == "Mét vuông (m²)":
+    col1.metric(label="Diện tích mặt sàn", value=f"{area} m²")
+else:
+    col1.metric(label="Diện tích mặt sàn", value=f"{area} sq ft")
+    
 col2.metric(label="Số phòng ngủ", value=f"{bedrooms} Phòng")
 col3.metric(label="Số phòng tắm", value=f"{bathrooms} Phòng")
 col4.metric(label="Năm hoàn thiện", value=f"Năm {year_built}")
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 
-# Nút bấm và Kết quả
+# ==========================================
+# 4. NÚT DỰ ĐOÁN & KẾT QUẢ
+# ==========================================
 if st.button("TIẾN HÀNH PHÂN TÍCH & ĐỊNH GIÁ", use_container_width=True):
     if 'model' in locals():
-        # Hiệu ứng Loading chuyên nghiệp
         with st.spinner('Hệ thống đang quét và phân tích dữ liệu thị trường...'):
-            time.sleep(1.5) # Giả lập thời gian quét dữ liệu
+            time.sleep(1.5) 
             prediction = model.predict(input_df)
             
-            # Hiển thị kết quả bằng HTML Custom
             result_html = f"""
             <div class="result-box">
                 <h3 style="color: #FFFFFF; font-weight: 300; letter-spacing: 2px;">GIÁ TRỊ ƯỚC TÍNH THỊ TRƯỜNG</h3>
                 <div class="result-price">${int(prediction[0]):,}</div>
                 <p style="color: #A0AAB5; font-style: italic; margin-top: 10px;">
-                    ✓ Độ tin cậy cao | Dữ liệu được trích xuất bằng thuật toán Machine Learning của Nhóm 09
+                    ✓ Độ tin cậy cao | Thuật toán Machine Learning đã tự động quy đổi và xử lý dữ liệu nhà ở
                 </p>
             </div>
             """
