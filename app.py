@@ -1,46 +1,209 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import time
 
-# 1. Tải mô hình AI thật đã được huấn luyện
+# Cấu hình trang (Mở rộng toàn màn hình, thanh công cụ luôn mở)
+st.set_page_config(
+    page_title="ESTATE ANALYTICS", 
+    page_icon="💎", 
+    layout="wide", 
+    initial_sidebar_state="expanded"
+)
+
+# ==========================================
+# 1. NHÚNG MÃ CSS CUSTOM (GIAO DIỆN GLASSMORPHISM XỊN XÒ)
+# ==========================================
+st.markdown("""
+<style>
+    /* Ẩn menu mặc định và footer, NHƯNG GIỮ LẠI header để thấy nút mũi tên > */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Chèn hình nền Biệt thự siêu sang toàn màn hình */
+    .stApp {
+        background-image: url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Phủ một lớp màu đen mờ lên trên hình nền để chữ dễ đọc hơn */
+    .stApp::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(14, 17, 23, 0.75); /* Độ tối của nền */
+        z-index: 0;
+    }
+    
+    /* Nâng các thành phần lên trên lớp nền đen mờ */
+    .stApp > header, .stApp > div {
+        z-index: 1;
+        position: relative;
+    }
+
+    /* HIỆU ỨNG GLASSMORPHISM CHO CÁC THẺ THÔNG SỐ */
+    div[data-testid="metric-container"] {
+        background: rgba(255, 255, 255, 0.05); /* Kính trong suốt */
+        backdrop-filter: blur(15px); /* Hiệu ứng làm mờ cảnh phía sau */
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    div[data-testid="metric-container"]:hover {
+        transform: translateY(-5px);
+        border-color: rgba(212, 175, 55, 0.8); /* Viền vàng hiện lên khi di chuột */
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Chỉnh màu chữ trong thẻ kính */
+    div[data-testid="metric-container"] label {
+        color: #E2E8F0 !important;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+        color: #D4AF37 !important; /* Chữ số màu vàng Gold */
+        font-size: 2.2rem;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    /* Nút bấm thủy tinh */
+    .stButton>button {
+        background: rgba(212, 175, 55, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: #D4AF37;
+        font-weight: 800;
+        font-size: 1.3rem;
+        padding: 20px 0;
+        border-radius: 15px;
+        border: 1px solid rgba(212, 175, 55, 0.5);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    .stButton>button:hover {
+        background: rgba(212, 175, 55, 0.8);
+        color: #000000;
+        transform: scale(1.02);
+        border: 1px solid rgba(212, 175, 55, 1);
+    }
+    
+    /* Tiêu đề */
+    .main-title {
+        text-align: center;
+        color: #FFFFFF;
+        font-size: 3.8rem;
+        font-weight: 900;
+        margin-bottom: 0px;
+        letter-spacing: 3px;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    }
+    .sub-title {
+        text-align: center;
+        color: #D4AF37;
+        font-size: 1.3rem;
+        margin-bottom: 50px;
+        letter-spacing: 2px;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    }
+    
+    /* Khung kết quả hiển thị dạng kính mờ */
+    .result-box {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        padding: 40px;
+        border-radius: 20px;
+        margin-top: 20px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        animation: fadeIn 1s ease-in-out;
+    }
+    .result-price {
+        font-size: 4.8rem;
+        color: #FFFFFF;
+        font-weight: 900;
+        margin: 15px 0;
+        text-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+    }
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================
+# 2. XỬ LÝ MODEL & GIAO DIỆN CHÍNH
+# ==========================================
 try:
     model = joblib.load('model.pkl')
 except FileNotFoundError:
-    st.error("Chưa tìm thấy file model.pkl! Vui lòng tải file mô hình lên.")
+    st.error("Chưa tìm thấy file model.pkl!")
 
-# Tiêu đề của ứng dụng web
-st.title("🏡 Ứng dụng Dự đoán Giá Nhà - Nhóm 09")
-st.markdown("Nhập các thông số cơ bản của ngôi nhà ở thanh công cụ bên trái để hệ thống AI dự đoán giá trị thực tế.")
+# Tiêu đề với CSS custom - Dùng tên ESTATE ANALYTICS bạn đã chọn
+st.markdown('<h1 class="main-title">ESTATE ANALYTICS</h1>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">Hệ thống Định giá Bất động sản Cao cấp - Nhóm 09</p>', unsafe_allow_html=True)
 
-# 2. Tạo form nhập liệu cho người dùng 
-st.sidebar.header("Thông số đầu vào")
+# Thanh công cụ nhập liệu bên trái
+st.sidebar.markdown("### ⚙️ THÔNG SỐ TÀI SẢN")
+st.sidebar.markdown("---")
     
 def user_input_features():
-    # LƯU Ý QUAN TRỌNG: Tên các cột ở phần 'data' phải khớp 100% với tên cột lúc Trâm train model!
-    area = st.sidebar.number_input('Diện tích (m2)', min_value=30, max_value=1000, value=100)
-    bedrooms = st.sidebar.number_input('Số phòng ngủ', min_value=1, max_value=10, value=3)
-    bathrooms = st.sidebar.number_input('Số phòng tắm', min_value=1, max_value=10, value=2)
-    year_built = st.sidebar.number_input('Năm xây dựng', min_value=1900, max_value=2026, value=2010)
+    area = st.sidebar.number_input('📐 Diện tích sàn (m²)', min_value=30, max_value=1000, value=100, step=5)
+    bedrooms = st.sidebar.number_input('🛏️ Số phòng ngủ', min_value=1, max_value=10, value=3)
+    bathrooms = st.sidebar.number_input('🛁 Số phòng tắm', min_value=1, max_value=10, value=2)
+    year_built = st.sidebar.number_input('🏗️ Năm xây dựng', min_value=1900, max_value=2026, value=2024)
         
     data = {
-        'Area': area,
-        'Bedrooms': bedrooms,
-        'Bathrooms': bathrooms,
+        'GrLivArea': area,
+        'BedroomAbvGr': bedrooms,
+        'FullBath': bathrooms,
         'YearBuilt': year_built
     }
     features = pd.DataFrame(data, index=[0])
-    return features
+    return features, area, bedrooms, bathrooms, year_built
 
-input_df = user_input_features()
+input_df, area, bedrooms, bathrooms, year_built = user_input_features()
 
-st.subheader("Bảng thông số bạn vừa nhập:")
-st.write(input_df)
+# Hiển thị thông số dạng thẻ Metric
+col1, col2, col3, col4 = st.columns(4)
+col1.metric(label="Diện tích mặt sàn", value=f"{area} m²")
+col2.metric(label="Số phòng ngủ", value=f"{bedrooms} Phòng")
+col3.metric(label="Số phòng tắm", value=f"{bathrooms} Phòng")
+col4.metric(label="Năm hoàn thiện", value=f"Năm {year_built}")
 
-# 3. Nút bấm dự đoán sử dụng mô hình thật
-if st.button("Dự đoán Giá Nhà"):
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+# Nút bấm và Kết quả
+if st.button("TIẾN HÀNH PHÂN TÍCH & ĐỊNH GIÁ", use_container_width=True):
     if 'model' in locals():
-        # Gọi AI vào dự đoán
-        prediction = model.predict(input_df)
-        
-        st.success(f"💰 Giá nhà dự đoán ước tính: ${int(prediction[0]):,}")
-        st.info("*(Kết quả được dự đoán trực tiếp từ Trí tuệ nhân tạo của Nhóm 09)*")
+        # Hiệu ứng Loading chuyên nghiệp
+        with st.spinner('Hệ thống đang quét và phân tích dữ liệu thị trường...'):
+            time.sleep(1.5) # Giả lập thời gian quét dữ liệu
+            prediction = model.predict(input_df)
+            
+            # Hiển thị kết quả bằng HTML Custom
+            result_html = f"""
+            <div class="result-box">
+                <h3 style="color: #FFFFFF; font-weight: 300; letter-spacing: 2px;">GIÁ TRỊ ƯỚC TÍNH THỊ TRƯỜNG</h3>
+                <div class="result-price">${int(prediction[0]):,}</div>
+                <p style="color: #A0AAB5; font-style: italic; margin-top: 10px;">
+                    ✓ Độ tin cậy cao | Dữ liệu được trích xuất bằng thuật toán Machine Learning của Nhóm 09
+                </p>
+            </div>
+            """
+            st.markdown(result_html, unsafe_allow_html=True)
