@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import joblib
 import time
+import json
 
 # ==========================================
-# CẤU HÌNH TRANG (Mở rộng toàn màn hình, thanh công cụ luôn mở)
+# CẤU HÌNH TRANG (Phải để ngay đầu tiên)
 # ==========================================
 st.set_page_config(
     page_title="ESTATE ANALYTICS", 
@@ -12,6 +13,26 @@ st.set_page_config(
     layout="wide", 
     initial_sidebar_state="expanded"
 )
+
+# --- XỬ LÝ ĐỌC NGUỒN DỮ LIỆU THỨ 2 (JSON) & BẮT LỖI TRY-EXCEPT ---
+def load_config():
+    """Hàm này dùng để đọc cấu hình hệ thống từ file JSON (Nguồn dữ liệu số 2)"""
+    try:
+        # Mở và đọc file JSON
+        with open('config.json', 'r', encoding='utf-8') as file:
+            config_data = json.load(file)
+            
+        rate = config_data['conversion_rates']['m2_to_sqft']
+        return rate
+        
+    except FileNotFoundError:
+        # Xử lý ngoại lệ nếu không tìm thấy file (Bắt lỗi Try-Except)
+        print("Lỗi: Không tìm thấy file config.json! Đang dùng tỷ giá mặc định.")
+        return 10.7639
+
+# Gọi hàm lấy tỷ giá
+TY_GIA_QUY_DOI = load_config()
+# -----------------------------------------------------------------
 
 # ==========================================
 # 1. NHÚNG MÃ CSS CUSTOM (GIAO DIỆN GLASSMORPHISM)
@@ -168,7 +189,8 @@ def user_input_features():
     # Xử lý nhập liệu theo đơn vị
     if unit_choice == "Mét vuông (m²)":
         area_display = st.sidebar.number_input('📐 Diện tích sàn (m²)', min_value=30, max_value=1000, value=100, step=5)
-        area_for_model = area_display * 10.7639 # AI dùng data Mỹ nên phải quy đổi ngầm
+        # Sử dụng tỷ giá đã lấy từ file JSON
+        area_for_model = area_display * TY_GIA_QUY_DOI 
     else:
         area_display = st.sidebar.number_input('📐 Diện tích sàn (sq ft)', min_value=300, max_value=10000, value=1076, step=50)
         area_for_model = area_display 
