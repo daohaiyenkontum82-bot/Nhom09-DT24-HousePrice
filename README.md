@@ -3,7 +3,7 @@
   # 🏡 ESTATE ANALYTICS
   ### Hệ thống Ứng dụng AI Dự đoán Giá Bất Động Sản (House Price Prediction)
   
-  *Bài tập lớn học phần Trí tuệ Nhân tạo - Giảng viên hướng dẫn: Thầy Nguyễn Hoàng Hải*
+  *Bài tập lớn học phần : Lập trình Python cho phân tích dữ liệu - Giảng viên hướng dẫn: Thầy Nguyễn Hoàng Hải*
 
   ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) 
   ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white) 
