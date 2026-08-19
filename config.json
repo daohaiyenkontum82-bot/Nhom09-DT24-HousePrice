@@ -1,0 +1,7 @@
+{
+  "project_name": "Estate Analytics",
+  "version": "1.0",
+  "conversion_rates": {
+    "m2_to_sqft": 10.7639
+  }
+}
