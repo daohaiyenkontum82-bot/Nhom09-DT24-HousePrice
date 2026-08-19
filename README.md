@@ -1,29 +1,55 @@
-# 🏡 Đồ án: Dự đoán Giá Nhà (House Price Prediction)
-*Thực hiện bởi Nhóm 09* 👋
+<div align="center">
+  
+  # 🏡 ESTATE ANALYTICS
+  ### Hệ thống Ứng dụng AI Dự đoán Giá Bất Động Sản (House Price Prediction)
+  
+  *Bài tập lớn học phần Trí tuệ Nhân tạo - Giảng viên hướng dẫn: Thầy Nguyễn Hoàng Hải*
 
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)]()
-[![Jupyter](https://img.shields.io/badge/Jupyter-F37626.svg?&style=for-the-badge&logo=Jupyter&logoColor=white)]()
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)]()
+  ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) 
+  ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white) 
+  ![Scikit-Learn](https://img.shields.io/badge/Scikit_Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
+  ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 
-Chào mừng mọi người đến với kho mã nguồn của Nhóm 09! Trong dự án này, tụi mình áp dụng các kỹ thuật Machine Learning để xây dựng mô hình dự đoán giá nhà dựa trên bộ dữ liệu từ Kaggle. Thay vì chỉ chạy file code khô khan, nhóm còn thiết kế thêm một giao diện web trực quan để ai cũng có thể nhập số liệu và xem thử giá nhà.
+</div>
 
-## 👥 Thành viên nhóm 09
-*   **Đào Hải Yến** - Trưởng nhóm *(Setup GitHub, Deploy giao diện Streamlit & Tổng hợp báo cáo)*
-*   **Lê Bảo Trâm** - Thành viên *(Xử lý code Machine Learning, Huấn luyện mô hình & Vẽ biểu đồ)*
-*   **Lê Bảo Ngọc** - Thành viên *(Nghiên cứu dữ liệu, Tiền xử lý Data & Viết cơ sở lý thuyết)*
+---
 
-## 🛠️ Công cụ & Thư viện sử dụng
-*   **Xử lý dữ liệu:** `pandas`, `numpy`
-*   **Trực quan hoá:** `matplotlib`, `seaborn`
-*   **Huấn luyện AI:** `scikit-learn` (Dùng thuật toán Hồi quy tuyến tính & Rừng ngẫu nhiên)
-*   **Xây dựng UI Web:** `streamlit`
+## 📖 Giới thiệu dự án
+Chào mừng đến với kho mã nguồn của **Nhóm 09**! 
 
-## 📂 Sơ đồ cấu trúc dự án
-```text
-Nhom09-DT24-HousePrice/
-│
-├── data/                     # Thư mục chứa data gốc (train.csv, zone_info.json)
-├── Nhom09_DT24.ipynb         # Code chính (Tiền xử lý, train & đánh giá mô hình)
-├── app.py                    # File giao diện web dự đoán giá nhà
-├── requirements.txt          # Danh sách các thư viện môi trường cần cài đặt
-└── README.md                 # Tài liệu giới thiệu dự án bạn đang đọc
+**Estate Analytics** là dự án ứng dụng các kỹ thuật Học máy (Machine Learning) để giải quyết bài toán định giá bất động sản dựa trên bộ dữ liệu House Prices từ Kaggle. Thay vì chỉ dừng lại ở các dòng code khô khan trên Jupyter Notebook, nhóm đã phát triển hoàn thiện một ứng dụng Web trực quan, giúp người dùng dễ dàng tương tác, nhập thông số và nhận về kết quả định giá ngay lập tức.
+
+## ✨ Tính năng nổi bật
+- **Thuật toán dự đoán chuẩn xác:** Ứng dụng mô hình Hồi quy tuyến tính (Linear Regression) đã qua xử lý làm sạch dữ liệu.
+- **Giao diện Glassmorphism:** Thiết kế web hiện đại, giao diện kính mờ sang trọng, tối ưu trải nghiệm người dùng (UX/UI).
+- **Tự động quy đổi thông minh:** Hệ thống tự động quy đổi đơn vị nhập liệu từ Mét vuông (m²) sang Feet vuông (sq ft) để khớp với dữ liệu máy học chuẩn Mỹ, đảm bảo độ chính xác tuyệt đối.
+
+---
+
+## 👥 Đội ngũ phát triển (Nhóm 09)
+
+| STT | Thành viên | Vai trò | Chi tiết công việc |
+| :---: | :--- | :---: | :--- |
+| **1** | **Đào Hải Yến** | Trưởng nhóm | Khởi tạo dự án & tải data Kaggle; Lập trình giao diện Streamlit; Tổng hợp viết báo cáo. |
+| **2** | **Lê Bảo Trâm** | Thành viên | Huấn luyện mô hình Machine Learning; Hỗ trợ debug code; Căn chỉnh định dạng báo cáo. |
+| **3** | **Lê Bảo Ngọc** | Thành viên | Tiền xử lý & làm sạch dữ liệu; Vẽ biểu đồ phân tích EDA; Dựng video thuyết trình. |
+
+---
+
+## 🛠 Công cụ & Thư viện sử dụng
+
+> Toàn bộ dự án được phát triển dựa trên hệ sinh thái của Python.
+
+- **Tiền xử lý & Trực quan hóa dữ liệu:** `pandas`, `numpy`, `matplotlib`, `seaborn`
+- **Xây dựng & Huấn luyện Model:** `scikit-learn`
+- **Triển khai Web App:** `streamlit`
+
+---
+
+## 🚀 Hướng dẫn cài đặt và chạy ứng dụng
+
+Nếu bạn muốn chạy thử dự án này trên máy tính cá nhân, hãy thực hiện các bước sau:
+
+**1. Clone kho lưu trữ này về máy:**
+```bash
+git clone [https://github.com/daohaiyenkontum82-bot/Nhom09-HousePrice.git](https://github.com/daohaiyenkontum82-bot/Nhom09-HousePrice.git)
