@@ -3,7 +3,7 @@
   # 🏡 ESTATE ANALYTICS
   ### Hệ thống Ứng dụng AI Dự đoán Giá Bất Động Sản (House Price Prediction)
   
-  *Bài tập lớn học phần Trí tuệ Nhân tạo - Giảng viên hướng dẫn: Thầy Nguyễn Hoàng Hải*
+  *Bài tập lớn học phần : 	Lập trình Python cho phân tích dữ liệu - Giảng viên hướng dẫn: Thầy Nguyễn Hoàng Hải*
 
   ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) 
   ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white) 
@@ -31,7 +31,7 @@ Chào mừng đến với kho mã nguồn của **Nhóm 09**!
 
 | STT | Thành viên | Vai trò | Chi tiết công việc thực hiện |
 | :---: | :--- | :---: | :--- |
-| **1** | **Đào Hải Yến** | Trưởng nhóm | Khởi tạo cấu trúc dự án, **thu thập bộ dữ liệu House Prices từ Kaggle**; Lập trình Web Streamlit & Xử lý tích hợp file JSON quy đổi; Tổng hợp báo cáo tổng kết. |
+| **1** | **Đào Hải Yến** | Trưởng nhóm | Khởi tạo cấu trúc dự án, thu thập bộ dữ liệu House Prices từ Kaggle; Lập trình Web Streamlit & Xử lý tích hợp file JSON quy đổi; Tổng hợp báo cáo tổng kết. |
 | **2** | **Lê Bảo Trâm** | Thành viên | Mã hóa biến phân loại và chia tập dữ liệu (Train/Test); Huấn luyện, so sánh 2 mô hình học máy (Linear Regression & Random Forest); Đánh giá mô hình (RMSE, MAE, R²) & biểu đồ thực tế; Định dạng báo cáo. |
 | **3** | **Lê Bảo Ngọc** | Thành viên | Tiền xử lý, làm sạch dữ liệu & bắt lỗi ngoại lệ (Try-Except) khi đọc file; Phân tích khám phá (EDA) với 5 loại biểu đồ & trả lời 5 câu hỏi dữ liệu; Dựng video báo cáo sản phẩm. |
 
